@@ -1,0 +1,969 @@
+
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
+import javax.swing.border.TitledBorder;
+
+
+public class Paint extends JFrame implements ActionListener, MouseListener, WindowListener{
+
+    Paint(){
+
+        getContentPane().add(tB(), BorderLayout.WEST);
+        getContentPane().add(scroll(panelD()), BorderLayout.CENTER);
+        getContentPane().add(cTB(), BorderLayout.SOUTH);
+
+        setMinimumSize(new Dimension(300,400));
+        setJMenuBar(mB());
+
+        addMouseListener(this);
+        addWindowListener(this);
+
+        setTitle(" - Paint");
+        setSize(new Dimension(800,600));
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(this.DO_NOTHING_ON_CLOSE);
+        setVisible(true);
+
+    }
+
+    public JMenuBar mB(){
+        JMenuBar mb = new JMenuBar();
+        JMenu m1 = new JMenu("File");
+        JMenu m2 = new JMenu("Colors");
+        JMenu m3 = new JMenu("Help");
+        JMenu m4 = new JMenu("View");
+        JMenu m5 = new JMenu("Image");
+Draw d = new Draw();
+            mI1 = new JMenuItem("New");
+            mI1.addActionListener(this);
+            mI2 = new JMenuItem("Save");
+            mI2.addActionListener(this);
+            mI3 = new JMenuItem("Save As...");
+            mI3.addActionListener(this);
+            mI4 = new JMenuItem("Exit");
+            mI4.addActionListener(this);
+            mI5 = new JMenuItem("Edit Colors...");
+            mI5.addActionListener(this);
+            mI6 = new JMenuItem("About Paint");
+            mI6.addActionListener(this);
+            mI7 = new JMenuItem("Attributes");
+            mI7.addActionListener(this);
+            chk1 = new JCheckBox("Tool Box", true);
+            chk1.addActionListener(this);
+            chk2 = new JCheckBox("Color Box", true);
+            chk2.addActionListener(this);
+
+
+        m1.add(mI1);
+        m1.add(new JSeparator());
+        m1.add(mI2);
+        m1.add(mI3);
+        m1.add(new JSeparator());
+        m1.add(mI4);
+        m2.add(mI5);
+        m3.add(mI6);
+        m4.add(chk1);
+        m4.add(chk2);
+        m5.add(mI7);
+
+        mb.add(m1);
+        mb.add(m4);
+        mb.add(m5);
+        mb.add(m2);
+        mb.add(m3);
+
+        return mb;
+    }
+
+    public JToolBar tB(){
+        tb = new JToolBar("Tools",JToolBar.VERTICAL);
+        b = new JButton[8];
+        JPanel pl = new JPanel(new GridLayout(0,2,5,5));
+        JPanel pl1 = new JPanel(new FlowLayout(0));
+        JPanel pl2 = new JPanel(new GridLayout(0,1,0,14));
+        JPanel pl3 = new JPanel(new FlowLayout(1));
+        JPanel pl4 = new JPanel(new FlowLayout(0));
+
+        for(int i=0;i<b.length;i++)
+        {
+            b[i] = new JButton();
+            b[i].setBorderPainted(false);
+            b[i].setContentAreaFilled(false);
+            b[i].setBorder(BorderFactory.createLoweredBevelBorder());
+            b[i].setPreferredSize(new Dimension(22,22));
+            b[i].addActionListener(this);
+            pl.add(b[i]);
+        }
+
+        b[0].setIcon(new ImageIcon("C:\\ico\\pen.gif"));
+        b[1].setIcon(new ImageIcon("C:\\ico\\brush.gif"));
+        b[2].setIcon(new ImageIcon("C:\\ico\\rect.gif"));
+        b[3].setIcon(new ImageIcon("C:\\ico\\poly.gif"));
+        b[4].setIcon(new ImageIcon("C:\\ico\\oval.gif"));
+        b[5].setIcon(new ImageIcon("C:\\ico\\rr.gif"));
+        b[6].setIcon(new ImageIcon("C:\\ico\\line.gif"));
+        b[7].setIcon(new ImageIcon("C:\\ico\\er.gif"));
+
+        b[0].setToolTipText("Pencil");
+        b[1].setToolTipText("Brush");
+        b[2].setToolTipText("Rectangle");
+        b[3].setToolTipText("Polygon");
+        b[4].setToolTipText("Ellipse");
+        b[5].setToolTipText("Round Rectangle");
+        b[6].setToolTipText("Line");
+        b[7].setToolTipText("Eraser");
+
+        pl3.setBorder(BorderFactory.createLoweredBevelBorder());
+        pl3.add(panelOr());
+        pl3.add(panelOr1());
+        pl3.add(panelOr2());
+        pl3.add(panelOr3());
+        pl3.add(panelOr4());
+        pl3.add(panelOr5());
+        pl3.add(panelOr6());
+        pl2.add(pl);
+        pl2.add(pl3);
+        pl2.setPreferredSize(new Dimension(50,210));
+        pl4.add(pl2);
+        tb.add(pl4);
+
+        tb.setBorderPainted(false);
+
+        return tb;
+    }
+
+    public JPanel panelOr(){//r
+        plO = new JPanel(new GridLayout(0,1,5,5));
+        bO = new JButton[3];
+
+        for(int i=0;i<3;i++)
+        {
+            bO[i] = new JButton();
+            bO[i].setBorderPainted(false);
+            bO[i].setContentAreaFilled(false);
+            bO[i].setBorder(BorderFactory.createLoweredBevelBorder());
+            bO[i].setPreferredSize(new Dimension(40,20));
+            bO[i].addActionListener(this);
+            plO.add(bO[i]);
+        }
+
+        bO[0].setIcon(new ImageIcon("C:\\ico\\ou_p.gif"));
+        bO[1].setIcon(new ImageIcon("C:\\ico\\blk.gif"));
+
+        plO.setVisible(false);
+
+        return plO;
+    }
+
+        public JPanel panelOr1(){//po
+         plO1 = new JPanel(new GridLayout(0,1,5,5));
+        bO1 = new JButton[3];
+
+        for(int i=0;i<3;i++)
+        {
+            bO1[i] = new JButton();
+            bO1[i].setBorderPainted(false);
+            bO1[i].setContentAreaFilled(false);
+            bO1[i].setBorder(BorderFactory.createLoweredBevelBorder());
+            bO1[i].setPreferredSize(new Dimension(40,20));
+            bO1[i].addActionListener(this);
+            plO1.add(bO1[i]);
+        }
+
+        bO1[0].setIcon(new ImageIcon("C:\\ico\\ou_p.gif"));
+        bO1[1].setIcon(new ImageIcon("C:\\ico\\blk.gif"));
+
+        plO1.setVisible(false);
+
+        return plO1;
+    }
+
+    public JPanel panelOr2(){//oval
+        plO2 = new JPanel(new GridLayout(0,1,5,5));
+        bO2 = new JButton[3];
+
+        for(int i=0;i<3;i++)
+        {
+            bO2[i] = new JButton();
+            bO2[i].setBorderPainted(false);
+            bO2[i].setContentAreaFilled(false);
+            bO2[i].setBorder(BorderFactory.createLoweredBevelBorder());
+            bO2[i].setPreferredSize(new Dimension(40,20));
+            bO2[i].addActionListener(this);
+            plO2.add(bO2[i]);
+        }
+
+        bO2[0].setIcon(new ImageIcon("C:\\ico\\ou_p.gif"));
+        bO2[1].setIcon(new ImageIcon("C:\\ico\\blk.gif"));
+
+        plO2.setVisible(false);
+
+        return plO2;
+    }
+
+    public JPanel panelOr3(){//rr
+        plO3 = new JPanel(new GridLayout(0,1,5,5));
+        bO3 = new JButton[3];
+
+        for(int i=0;i<3;i++)
+        {
+            bO3[i] = new JButton();
+            bO3[i].setBorderPainted(false);
+            bO3[i].setContentAreaFilled(false);
+            bO3[i].setBorder(BorderFactory.createLoweredBevelBorder());
+            bO3[i].setPreferredSize(new Dimension(40,20));
+            bO3[i].addActionListener(this);
+            plO3.add(bO3[i]);
+        }
+
+        bO3[0].setIcon(new ImageIcon("C:\\ico\\ou_p.gif"));
+        bO3[1].setIcon(new ImageIcon("C:\\ico\\blk.gif"));
+
+        plO3.setVisible(false);
+
+        return plO3;
+    }
+
+    public JPanel panelOr4(){//line
+        plO4 = new JPanel(new GridLayout(0,1,5,5));
+        bO4 = new JButton[5];
+
+for(int i=0;i<5;i++)
+        {
+            bO4[i] = new JButton();
+            bO4[i].setBorderPainted(false);
+            bO4[i].setContentAreaFilled(false);
+            bO4[i].setBorder(BorderFactory.createLoweredBevelBorder());
+            bO4[i].setPreferredSize(new Dimension(40,13));
+            bO4[i].addActionListener(this);
+            plO4.add(bO4[i]);
+        }
+
+        bO4[0].setIcon(new ImageIcon("C:\\ico\\l1_p.gif"));
+        bO4[1].setIcon(new ImageIcon("C:\\ico\\l2.gif"));
+        bO4[2].setIcon(new ImageIcon("C:\\ico\\l3.gif"));
+        bO4[3].setIcon(new ImageIcon("C:\\ico\\l4.gif"));
+        bO4[4].setIcon(new ImageIcon("C:\\ico\\l5.gif"));
+
+        plO4.setVisible(false);
+
+        return plO4;
+    }
+
+    public JPanel panelOr5(){//eraser
+        plO5 = new JPanel(new GridLayout(0,1,5,5));
+        bO5 = new JButton[4];
+
+for(int i=0;i<4;i++)
+        {
+            bO5[i] = new JButton();
+            bO5[i].setBorderPainted(false);
+            bO5[i].setContentAreaFilled(false);
+            bO5[i].setBorder(BorderFactory.createLoweredBevelBorder());
+            bO5[i].setPreferredSize(new Dimension(24,17));
+            bO5[i].addActionListener(this);
+            plO5.add(bO5[i]);
+        }
+
+        bO5[0].setIcon(new ImageIcon("C:\\ico\\e1_p.gif"));
+        bO5[1].setIcon(new ImageIcon("C:\\ico\\e2.gif"));
+        bO5[2].setIcon(new ImageIcon("C:\\ico\\e3.gif"));
+        bO5[3].setIcon(new ImageIcon("C:\\ico\\e4.gif"));
+
+        plO5.setVisible(false);
+
+        return plO5;
+    }
+
+    public JPanel panelOr6(){//brush
+        plO6 = new JPanel(new GridLayout(2,3,5,5));
+        bO6 = new JButton[6];
+
+for(int i=0;i<6;i++)
+        {
+            bO6[i] = new JButton();
+            bO6[i].setBorderPainted(false);
+            bO6[i].setContentAreaFilled(false);
+            bO6[i].setBorder(BorderFactory.createLoweredBevelBorder());
+            bO6[i].setPreferredSize(new Dimension(12,17));
+            bO6[i].addActionListener(this);
+            plO6.add(bO6[i]);
+        }
+
+        bO6[0].setIcon(new ImageIcon("C:\\ico\\bc1_p.gif"));
+        bO6[1].setIcon(new ImageIcon("C:\\ico\\bc2.gif"));
+        bO6[2].setIcon(new ImageIcon("C:\\ico\\bc3.gif"));
+        bO6[3].setIcon(new ImageIcon("C:\\ico\\br1.gif"));
+        bO6[4].setIcon(new ImageIcon("C:\\ico\\br2.gif"));
+        bO6[5].setIcon(new ImageIcon("C:\\ico\\br3.gif"));
+
+        plO6.setVisible(false);
+
+        return plO6;
+    }
+
+    public JDialog cDiC(){
+        diC = new JDialog(this, true);
+        JPanel plC1 = new JPanel(new FlowLayout(1));
+        JPanel plC2 = new JPanel(new FlowLayout(1,15,5));
+        JLabel lblC = new JLabel("Are You Sure?");
+        bCO = new JButton("Yes");
+        bCO.addActionListener(this);
+        bCC = new JButton("No");
+        bCC.addActionListener(this);
+
+        diC.setLayout(null);
+
+        plC1.add(lblC);
+        plC2.add(bCO);
+        plC2.add(bCC);
+
+        plC1.setBounds(25, 11, 100, 100);
+        plC2.setBounds(72, 47, 150, 150);
+
+        diC.add(plC1);
+        diC.add(plC2);
+
+        diC.setTitle("Exit");
+        diC.setBounds(100, 100, 300, 120);
+        diC.setLocationRelativeTo(null);
+        diC.setResizable(false);
+
+        diC.setVisible(true);
+
+        return diC;
+    }
+
+    public JDialog cDiAt(){
+        diAt = new JDialog(this, true);
+        JPanel plAt1 = new JPanel(new GridLayout(0,1,8,8));
+        JPanel plAt2 = new JPanel(new FlowLayout(0));
+        JPanel plAt3 = new JPanel(new FlowLayout(0));
+        JPanel plAt4 = new JPanel(new GridLayout(0,1));
+        JPanel plAdd = new JPanel(new FlowLayout(1));
+        JRadioButton rb = new JRadioButton("Pixels", true);
+        JLabel lblAt = new JLabel("Width:");
+        JLabel lblAt2 = new JLabel("Height:");
+        bAtO = new JButton("OK");
+        bAtO.addActionListener(this);
+        bAtC = new JButton("Cancel");
+        bAtC.addActionListener(this);
+        bAtD = new JButton("Default");
+        bAtD.addActionListener(this);
+        txtAt = new JTextField(5);
+        txtAt2 = new JTextField(5);
+
+        diAt.setLayout(null);
+
+        TitledBorder tt = BorderFactory.createTitledBorder("Units");
+        tt.setTitleJustification(tt.LEFT);
+        plAt3.setBorder(tt);
+
+        rb.setEnabled(false);
+
+        String vW = String.valueOf((int)Draw.dn.getWidth());
+        String vH = String.valueOf((int)Draw.dn.getHeight());
+
+        txtAt.setText(vW);
+        txtAt2.setText(vH);
+
+        plAt1.add(bAtO);
+        plAt1.add(bAtC);
+        plAt1.add(bAtD);
+        plAt2.add(lblAt);
+        plAt2.add(txtAt);
+        plAt2.add(lblAt2);
+        plAt2.add(txtAt2);
+        plAt3.add(rb);
+        plAt4.add(plAt2);
+        plAt4.add(plAt3);
+
+        plAdd.add(plAt1);
+
+        plAdd.setBounds(290, 30, 100, 150);
+        plAt4.setBounds(20, 25, 250, 110);
+
+        diAt.add(plAdd);
+        diAt.add(plAt4);
+
+        diAt.setTitle("Attributes");
+        diAt.setBounds(100, 100, 400, 200);
+        diAt.setLocationRelativeTo(null);
+        diAt.setResizable(false);
+
+        diAt.setVisible(true);
+        
+        return diAt;
+    }
+
+    public JToolBar cTB(){
+        ctb = new JToolBar("Tools",JToolBar.HORIZONTAL);
+        paC = new JPanel[28];
+        JPanel plB = new JPanel(null);
+        JPanel plT = new JPanel(new FlowLayout(0));
+        JPanel plCP = new JPanel(new GridLayout(2,2,2,2));
+        plC1 = new JPanel(new FlowLayout(1));
+        plC2 = new JPanel(new FlowLayout(0));
+
+          for(int i=0;i<paC.length;i++)
+        {
+            paC[i] = new JPanel();
+            paC[i].setBorder(BorderFactory.createEtchedBorder());
+            paC[i].setBounds(6, 6, 16, 16);
+            paC[i].addMouseListener(this);
+            plCP.add(paC[i]);
+        }
+
+        paC[0].setBackground(new Color(0,0,0));
+        paC[1].setBackground(new Color(130,130,130));
+        paC[2].setBackground(new Color(139,54,38));
+        paC[3].setBackground(new Color(139,134,78));
+        paC[4].setBackground(new Color(0,139,69));
+        paC[5].setBackground(new Color(0,134,139));
+        paC[6].setBackground(new Color(0,0,128));
+        paC[7].setBackground(new Color(128,0,128));
+        paC[8].setBackground(new Color(139,126,76));
+        paC[9].setBackground(new Color(85,107,47));
+        paC[10].setBackground(new Color(30,144,255));
+        paC[11].setBackground(new Color(39,64,139));
+        paC[12].setBackground(new Color(105,89,205));
+        paC[13].setBackground(new Color(139,69,0));
+        paC[14].setBackground(new Color(255,255,255));
+        paC[15].setBackground(new Color(190,190,190));
+        paC[16].setBackground(new Color(255,0,0));
+        paC[17].setBackground(new Color(255,255,0));
+        paC[18].setBackground(new Color(0,255,0));
+        paC[19].setBackground(new Color(152,245,255));
+        paC[20].setBackground(new Color(0,0,255));
+        paC[21].setBackground(new Color(255,0,255));
+        paC[22].setBackground(new Color(238,238,0));
+        paC[23].setBackground(new Color(0,238,0));
+        paC[24].setBackground(new Color(0,255,255));
+        paC[25].setBackground(new Color(132,122,255));
+        paC[26].setBackground(new Color(255,20,147));
+        paC[27].setBackground(new Color(238,118,0));
+
+        plB.setBorder(BorderFactory.createLoweredBevelBorder());
+        plB.setPreferredSize(new Dimension(35,35));
+        plC1.setBorder(BorderFactory.createRaisedBevelBorder());
+        plC1.setPreferredSize(new Dimension(15,15));
+        plC1.setBounds(6, 6, 16, 16);
+        plC1.setBackground(new Color(0,0,0));
+        plC2.setBorder(BorderFactory.createRaisedBevelBorder());
+        plC2.setPreferredSize(new Dimension(15,15));
+        plC2.setBounds(13, 13, 16, 16);
+        plC2.setBackground(new Color(255,255,255));
+
+
+        plB.add(plC1);
+        plB.add(plC2);
+
+        plT.add(plB);
+        plT.add(plCP);
+        ctb.add(plT);
+
+        ctb.setBorderPainted(false);
+
+        return ctb;
+    }
+
+     public JPanel panelD(){
+        panel = new JPanel(new FlowLayout(0,2,2));
+        panel.setBackground(Color.gray);
+        panel.setBorder(BorderFactory.createLoweredBevelBorder());
+        panel.add(panelD2());
+
+        return panel;
+    }
+
+     public JPanel panelD2(){
+        panel2 = new JPanel(new BorderLayout());
+        panel.setBackground(Color.gray);
+        panel.add(new Draw());
+
+        return panel2;
+    }
+
+     public JScrollPane scroll(Component c){
+        js = new JScrollPane(c,20,30);
+         return js;
+     }
+
+    public void actionPerformed(ActionEvent e) {
+        for(int i=0;i<b.length;i++)
+        {
+            if(e.getSource() == b[i]){
+                int temp = i;
+                b[0].setIcon(new ImageIcon("C:\\ico\\pen.gif"));
+                b[1].setIcon(new ImageIcon("C:\\ico\\brush.gif"));
+                b[2].setIcon(new ImageIcon("C:\\ico\\rect.gif"));
+                b[3].setIcon(new ImageIcon("C:\\ico\\poly.gif"));
+                b[4].setIcon(new ImageIcon("C:\\ico\\oval.gif"));
+                b[5].setIcon(new ImageIcon("C:\\ico\\rr.gif"));
+                b[6].setIcon(new ImageIcon("C:\\ico\\line.gif"));
+                b[7].setIcon(new ImageIcon("C:\\ico\\er.gif"));
+
+                if(temp == 0){
+                    b[0].setIcon(new ImageIcon("C:\\ico\\pen_p.gif"));
+                    Draw.choice = 0;
+                    plO.setVisible(false);
+                    plO1.setVisible(false);
+                    plO2.setVisible(false);
+                    plO3.setVisible(false);
+                    plO4.setVisible(false);
+                    plO5.setVisible(false);
+                    plO6.setVisible(false);
+                }
+                else if(temp == 1){
+                    b[1].setIcon(new ImageIcon("C:\\ico\\brush_p.gif"));
+                    Draw.choice = 1;
+                    plO6.setVisible(true);
+                    plO.setVisible(false);
+                    plO1.setVisible(false);
+                    plO2.setVisible(false);
+                    plO3.setVisible(false);
+                    plO4.setVisible(false);
+                    plO5.setVisible(false);
+                }
+                else if(temp == 2){
+                    b[2].setIcon(new ImageIcon("C:\\ico\\rect_p.gif"));
+                    Draw.choice = 2;
+                    plO.setVisible(true);
+                    plO1.setVisible(false);
+                    plO2.setVisible(false);
+                    plO3.setVisible(false);
+                    plO4.setVisible(false);
+                    plO5.setVisible(false);
+                    plO6.setVisible(false);
+                }
+                else if(temp == 3){
+                    b[3].setIcon(new ImageIcon("C:\\ico\\poly_p.gif"));
+                    Draw.choice = 3;
+                    plO1.setVisible(true);
+                    plO.setVisible(false);
+                    plO2.setVisible(false);
+                    plO3.setVisible(false);
+                    plO4.setVisible(false);
+                    plO5.setVisible(false);
+                    plO6.setVisible(false);
+                }
+                else if(temp == 4){
+                    b[4].setIcon(new ImageIcon("C:\\ico\\oval_p.gif"));
+                    Draw.choice = 4;
+                    plO2.setVisible(true);
+                    plO.setVisible(false);
+                    plO1.setVisible(false);
+                    plO3.setVisible(false);
+                    plO4.setVisible(false);
+                    plO5.setVisible(false);
+                    plO6.setVisible(false);
+                }
+                else if(temp == 5){
+                    b[5].setIcon(new ImageIcon("C:\\ico\\rr_p.gif"));
+                    Draw.choice = 5;
+                    plO3.setVisible(true);
+                    plO.setVisible(false);
+                    plO1.setVisible(false);
+                    plO2.setVisible(false);
+                    plO4.setVisible(false);
+                    plO5.setVisible(false);
+                    plO6.setVisible(false);
+                }
+                else if(temp == 6){
+                    b[6].setIcon(new ImageIcon("C:\\ico\\line_p.gif"));
+                    Draw.choice = 6;
+                    plO4.setVisible(true);
+                    plO.setVisible(false);
+                    plO1.setVisible(false);
+                    plO2.setVisible(false);
+                    plO3.setVisible(false);
+                    plO5.setVisible(false);
+                    plO6.setVisible(false);
+                }
+                else if(temp == 7){
+                    b[7].setIcon(new ImageIcon("C:\\ico\\er_p.gif"));
+                    Draw.choice = 7;
+                    plO5.setVisible(true);
+                    plO.setVisible(false);
+                    plO1.setVisible(false);
+                    plO2.setVisible(false);
+                    plO3.setVisible(false);
+                    plO4.setVisible(false);
+                    plO6.setVisible(false);
+                }
+                break;
+            }
+        }
+
+        if(e.getSource() == mI1){
+            vW = 800;
+            vH = 600;
+
+            Draw.dn.setSize(vW, vH);
+
+            Draw.img = new BufferedImage(vW ,vH,BufferedImage.TYPE_INT_RGB);
+            Graphics2D gi = Draw.img.createGraphics();
+            gi.setColor(Color.WHITE);
+            gi.fillRect(0, 0, vW , vH);
+
+            new Draw().setPreferredSize(new Dimension(vW , vH));
+            new Draw().repaint();
+            js.setViewportView(panel);
+            panel2.add(new Draw());
+    
+        }
+        else if(e.getSource() == mI2){
+
+        }
+        else if(e.getSource() == mI3){
+
+        }
+        else if(e.getSource() == mI4){
+            cDiC();
+        }
+        else if(e.getSource() == mI5)
+        {
+            JColorChooser choose = new JColorChooser();
+            Color color = choose.showDialog(this, "Color Choose", plC1.getBackground());
+            plC1.setBackground(color);
+        }
+        else if(e.getSource() == mI6){
+
+        }
+        else if(e.getSource() == mI7){
+            cDiAt();
+        }
+
+        if(!chk1.isSelected()){
+            tb.setVisible(false);
+        }
+        else{
+            tb.setVisible(true);
+        }
+
+        if(!chk2.isSelected()){
+            ctb.setVisible(false);
+        }
+        else{
+            ctb.setVisible(true);
+        }
+
+        for(int i=0;i<bO.length;i++){
+            if(e.getSource() == bO[i]){
+                Draw.optionR = i;
+                if(i == 0){
+                    bO[0].setIcon(new ImageIcon("C:\\ico\\ou_p.gif"));
+                    bO[1].setIcon(new ImageIcon("C:\\ico\\blk.gif"));
+                }
+                else if(i == 1){
+                    bO[0].setIcon(new ImageIcon("C:\\ico\\ou.gif"));
+                    bO[1].setIcon(new ImageIcon("C:\\ico\\blk_p.gif"));
+                }
+                break;
+            }
+        }
+
+        for(int i=0;i<bO1.length;i++){
+            if(e.getSource() == bO1[i]){
+                Draw.option = i;
+                if(i == 0){
+                    bO1[0].setIcon(new ImageIcon("C:\\ico\\ou_p.gif"));
+                    bO1[1].setIcon(new ImageIcon("C:\\ico\\blk.gif"));
+                }
+                else if(i == 1){
+                    bO1[0].setIcon(new ImageIcon("C:\\ico\\ou.gif"));
+                    bO1[1].setIcon(new ImageIcon("C:\\ico\\blk_p.gif"));
+                }
+                break;
+            }
+        }
+
+        for(int i=0;i<bO2.length;i++){
+            if(e.getSource() == bO2[i]){
+                Draw.optionO = i;
+                if(i == 0){
+                    bO2[0].setIcon(new ImageIcon("C:\\ico\\ou_p.gif"));
+                    bO2[1].setIcon(new ImageIcon("C:\\ico\\blk.gif"));
+                }
+                else if(i == 1){
+                    bO2[0].setIcon(new ImageIcon("C:\\ico\\ou.gif"));
+                    bO2[1].setIcon(new ImageIcon("C:\\ico\\blk_p.gif"));
+                }
+                break;
+            }
+        }
+
+        for(int i=0;i<bO3.length;i++){
+            if(e.getSource() == bO3[i]){
+                Draw.optionRR = i;
+                if(i == 0){
+                    bO3[0].setIcon(new ImageIcon("C:\\ico\\ou_p.gif"));
+                    bO3[1].setIcon(new ImageIcon("C:\\ico\\blk.gif"));
+                }
+                else if(i == 1){
+                    bO3[0].setIcon(new ImageIcon("C:\\ico\\ou.gif"));
+                    bO3[1].setIcon(new ImageIcon("C:\\ico\\blk_p.gif"));
+                }
+                break;
+            }
+        }
+
+        for(int i=0;i<bO4.length;i++){
+            if(e.getSource() == bO4[i]){
+                Draw.optionL = i;
+                if(i == 0){
+                    bO4[0].setIcon(new ImageIcon("C:\\ico\\l1_p.gif"));
+                    bO4[1].setIcon(new ImageIcon("C:\\ico\\l2.gif"));
+                    bO4[2].setIcon(new ImageIcon("C:\\ico\\l3.gif"));
+                    bO4[3].setIcon(new ImageIcon("C:\\ico\\l4.gif"));
+                    bO4[4].setIcon(new ImageIcon("C:\\ico\\l5.gif"));
+                }
+                else if(i == 1){
+                    bO4[0].setIcon(new ImageIcon("C:\\ico\\l1.gif"));
+                    bO4[1].setIcon(new ImageIcon("C:\\ico\\l2_p.gif"));
+                    bO4[2].setIcon(new ImageIcon("C:\\ico\\l3.gif"));
+                    bO4[3].setIcon(new ImageIcon("C:\\ico\\l4.gif"));
+                    bO4[4].setIcon(new ImageIcon("C:\\ico\\l5.gif"));
+                }
+                else if(i == 2){
+                    bO4[0].setIcon(new ImageIcon("C:\\ico\\l1.gif"));
+                    bO4[1].setIcon(new ImageIcon("C:\\ico\\l2.gif"));
+                    bO4[2].setIcon(new ImageIcon("C:\\ico\\l3_p.gif"));
+                    bO4[3].setIcon(new ImageIcon("C:\\ico\\l4.gif"));
+                    bO4[4].setIcon(new ImageIcon("C:\\ico\\l5.gif"));
+                }
+                else if(i == 3){
+                    bO4[0].setIcon(new ImageIcon("C:\\ico\\l1.gif"));
+                    bO4[1].setIcon(new ImageIcon("C:\\ico\\l2.gif"));
+                    bO4[2].setIcon(new ImageIcon("C:\\ico\\l3.gif"));
+                    bO4[3].setIcon(new ImageIcon("C:\\ico\\l4_p.gif"));
+                    bO4[4].setIcon(new ImageIcon("C:\\ico\\l5.gif"));
+                }
+                else if(i == 4){
+                    bO4[0].setIcon(new ImageIcon("C:\\ico\\l1.gif"));
+                    bO4[1].setIcon(new ImageIcon("C:\\ico\\l2.gif"));
+                    bO4[2].setIcon(new ImageIcon("C:\\ico\\l3.gif"));
+                    bO4[3].setIcon(new ImageIcon("C:\\ico\\l4.gif"));
+                    bO4[4].setIcon(new ImageIcon("C:\\ico\\l5_p.gif"));
+                }
+                break;
+            }
+        }
+
+        for(int i=0;i<bO5.length;i++){
+            if(e.getSource() == bO5[i]){
+                Draw.optionE = i;
+                if(i == 0){
+                    bO5[0].setIcon(new ImageIcon("C:\\ico\\e1_p.gif"));
+                    bO5[1].setIcon(new ImageIcon("C:\\ico\\e2.gif"));
+                    bO5[2].setIcon(new ImageIcon("C:\\ico\\e3.gif"));
+                    bO5[3].setIcon(new ImageIcon("C:\\ico\\e4.gif"));
+                }
+                else if(i == 1){
+                    bO5[0].setIcon(new ImageIcon("C:\\ico\\e1.gif"));
+                    bO5[1].setIcon(new ImageIcon("C:\\ico\\e2_p.gif"));
+                    bO5[2].setIcon(new ImageIcon("C:\\ico\\e3.gif"));
+                    bO5[3].setIcon(new ImageIcon("C:\\ico\\e4.gif"));
+                }
+                else if(i == 2){
+                    bO5[0].setIcon(new ImageIcon("C:\\ico\\e1.gif"));
+                    bO5[1].setIcon(new ImageIcon("C:\\ico\\e2.gif"));
+                    bO5[2].setIcon(new ImageIcon("C:\\ico\\e3_p.gif"));
+                    bO5[3].setIcon(new ImageIcon("C:\\ico\\e4.gif"));
+                }
+                else if(i == 3){
+                    bO5[0].setIcon(new ImageIcon("C:\\ico\\e1.gif"));
+                    bO5[1].setIcon(new ImageIcon("C:\\ico\\e2.gif"));
+                    bO5[2].setIcon(new ImageIcon("C:\\ico\\e3.gif"));
+                    bO5[3].setIcon(new ImageIcon("C:\\ico\\e4_p.gif"));
+                }
+                break;
+            }
+        }
+
+        for(int i=0;i<bO6.length;i++){
+            if(e.getSource() == bO6[i]){
+                Draw.optionB = i;
+                if(i == 0){
+                    bO6[0].setIcon(new ImageIcon("C:\\ico\\bc1_p.gif"));
+                    bO6[1].setIcon(new ImageIcon("C:\\ico\\bc2.gif"));
+                    bO6[2].setIcon(new ImageIcon("C:\\ico\\bc3.gif"));
+                    bO6[3].setIcon(new ImageIcon("C:\\ico\\br1.gif"));
+                    bO6[4].setIcon(new ImageIcon("C:\\ico\\br2.gif"));
+                    bO6[5].setIcon(new ImageIcon("C:\\ico\\br3.gif"));
+                }
+                else if(i == 1){
+                    bO6[0].setIcon(new ImageIcon("C:\\ico\\bc1.gif"));
+                    bO6[1].setIcon(new ImageIcon("C:\\ico\\bc2_p.gif"));
+                    bO6[2].setIcon(new ImageIcon("C:\\ico\\bc3.gif"));
+                    bO6[3].setIcon(new ImageIcon("C:\\ico\\br1.gif"));
+                    bO6[4].setIcon(new ImageIcon("C:\\ico\\br2.gif"));
+                    bO6[5].setIcon(new ImageIcon("C:\\ico\\br3.gif"));
+                }
+                else if(i == 2){
+                    bO6[0].setIcon(new ImageIcon("C:\\ico\\bc1.gif"));
+                    bO6[1].setIcon(new ImageIcon("C:\\ico\\bc2.gif"));
+                    bO6[2].setIcon(new ImageIcon("C:\\ico\\bc3_p.gif"));
+                    bO6[3].setIcon(new ImageIcon("C:\\ico\\br1.gif"));
+                    bO6[4].setIcon(new ImageIcon("C:\\ico\\br2.gif"));
+                    bO6[5].setIcon(new ImageIcon("C:\\ico\\br3.gif"));
+                }
+                else if(i == 3){
+                   bO6[0].setIcon(new ImageIcon("C:\\ico\\bc1.gif"));
+                   bO6[1].setIcon(new ImageIcon("C:\\ico\\bc2.gif"));
+                   bO6[2].setIcon(new ImageIcon("C:\\ico\\bc3.gif"));
+                   bO6[3].setIcon(new ImageIcon("C:\\ico\\br1_p.gif"));
+                   bO6[4].setIcon(new ImageIcon("C:\\ico\\br2.gif"));
+                   bO6[5].setIcon(new ImageIcon("C:\\ico\\br3.gif"));
+                }
+                else if(i == 4){
+                   bO6[0].setIcon(new ImageIcon("C:\\ico\\bc1.gif"));
+                   bO6[1].setIcon(new ImageIcon("C:\\ico\\bc2.gif"));
+                   bO6[2].setIcon(new ImageIcon("C:\\ico\\bc3.gif"));
+                   bO6[3].setIcon(new ImageIcon("C:\\ico\\br1.gif"));
+                   bO6[4].setIcon(new ImageIcon("C:\\ico\\br2_p.gif"));
+                   bO6[5].setIcon(new ImageIcon("C:\\ico\\br3.gif"));
+                }
+                else if(i == 5){
+                   bO6[0].setIcon(new ImageIcon("C:\\ico\\bc1.gif"));
+                   bO6[1].setIcon(new ImageIcon("C:\\ico\\bc2.gif"));
+                   bO6[2].setIcon(new ImageIcon("C:\\ico\\bc3.gif"));
+                   bO6[3].setIcon(new ImageIcon("C:\\ico\\br1.gif"));
+                   bO6[4].setIcon(new ImageIcon("C:\\ico\\br2.gif"));
+                   bO6[5].setIcon(new ImageIcon("C:\\ico\\br3_p.gif"));
+                }
+                break;
+            }
+        }
+
+        if(e.getSource() == bAtO){
+            vW = Integer.parseInt(txtAt.getText());
+            vH = Integer.parseInt(txtAt2.getText());
+     
+            Draw.dn.setSize(vW, vH);
+            
+            diAt.setVisible(false);
+
+            /*Draw.img = new BufferedImage(vW ,vH,BufferedImage.TYPE_INT_RGB);
+            Graphics2D gi = Draw.img.createGraphics();
+            gi.setColor(Color.WHITE);
+            gi.fillRect(0, 0, vW , vH);*/
+            
+            new Draw().setPreferredSize(new Dimension(vW , vH));
+
+            js.setViewportView(panel);
+            panel2.add(new Draw());
+
+        }
+
+        else if(e.getSource() == bAtC){
+
+            diAt.setVisible(false);
+        }
+        else if(e.getSource() == bAtD){
+
+            txtAt.setText("800");
+            txtAt2.setText("600");
+
+            vW = Integer.parseInt(txtAt.getText());
+            vH = Integer.parseInt(txtAt2.getText());
+
+        }
+
+        if(e.getSource() == bCO){
+            System.exit(0);
+        }
+        else if(e.getSource() == bCC){
+            diC.setVisible(false);
+        }
+    }
+
+    public void mouseClicked(MouseEvent e) {
+        for(int i=0;i<paC.length;i++){
+            if(e.getSource() == paC[i]){
+                if(!e.isMetaDown()){
+                    plC1.setBackground(paC[i].getBackground());
+                }
+                else{
+                    plC2.setBackground(paC[i].getBackground());
+                }
+            }
+        }
+    }
+
+    public void mousePressed(MouseEvent e) {}
+
+    public void mouseReleased(MouseEvent e) {}
+
+    public void mouseEntered(MouseEvent e) {}
+
+    public void mouseExited(MouseEvent e) {}
+
+
+    public void windowOpened(WindowEvent e) {}
+
+    public void windowClosing(WindowEvent e) {
+        cDiC();
+    }
+
+    public void windowClosed(WindowEvent e) {}
+
+    public void windowIconified(WindowEvent e) {}
+
+    public void windowDeiconified(WindowEvent e) {}
+
+    public void windowActivated(WindowEvent e) { }
+
+    public void windowDeactivated(WindowEvent e) {}
+
+
+     public static void main(String[] args) {
+         new Paint();
+     }
+
+     static public int vW = 1 , vH = 1;
+     static public JMenuItem mI1, mI2, mI3, mI4, mI5, mI6, mI7;
+     static public JCheckBox chk1, chk2;
+     static public JButton[] b, bO, bO1, bO2, bO3, bO4, bO5, bO6;
+     static public JButton bAtO, bAtC, bAtD, bCO, bCC;
+     static public JTextField txtAt, txtAt2;
+     static public JPanel[] paC;
+     static public JToolBar tb, ctb;
+     static public JDialog diAt, diC;
+     static public JScrollPane js;
+     static public JPanel plC1, plC2, plO, plO1, plO2, plO3, plO4, plO5, plO6;
+     static public JPanel panel, panel2;
+
+}
+
